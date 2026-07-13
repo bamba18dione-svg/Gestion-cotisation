@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coach — Vue globale · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <div class="md:flex md:min-h-screen">
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Espace Coach</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <button data-section="global" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 bg-white/10 font-semibold">📊 Vue globale</button>
+        <button data-section="audit" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🔍 Audit</button>
+        <button data-section="apprenants" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">👥 Apprenants</button>
+      </nav>
+      <div class="mt-auto font-mono text-[10px] text-goldsoft/70">Accès lecture seule</div>
+    </aside>
+
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-5xl">
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Coach Superviseur</p>
+          <h1 id="page-title" class="font-display text-xl md:text-2xl font-bold">Vue globale</h1>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">CS</div>
+      </div>
+
+      <!-- ===== Section : Vue globale ===== -->
+      <section id="section-global" class="space-y-4">
+        <div class="grid grid-cols-3 gap-2.5 md:grid-cols-4 md:gap-4">
+          <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+            <div class="font-display text-lg md:text-2xl font-bold text-teal"><!-- $stats['taux_recouvrement'].'%' -->87%</div>
+            <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">Recouvrement</div>
+          </div>
+          <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+            <div class="font-display text-lg md:text-2xl font-bold text-[#8a6420]"><!-- number_format($stats['tresorerie']) -->1,2M</div>
+            <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">Trésorerie FCFA</div>
+          </div>
+          <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+            <div class="font-display text-lg md:text-2xl font-bold text-red"><!-- $stats['nb_retards'] -->4</div>
+            <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">Retards</div>
+          </div>
+          <div class="hidden md:block bg-white border border-paperline rounded-xl p-5">
+            <div class="font-display text-2xl font-bold"><!-- $stats['nb_campagnes_ouvertes'] -->2</div>
+            <div class="font-mono text-[11px] uppercase tracking-wide text-ink/60">Campagnes ouvertes</div>
+          </div>
+        </div>
+
+        <div class="md:grid md:grid-cols-2 md:gap-4">
+          <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4">
+            <h2 class="font-display text-base font-semibold mb-3">Recouvrement par semaine</h2>
+            <!-- boucle PHP sur $recouvrementParSemaine pour générer les barres -->
+            <div class="flex items-end gap-2.5 h-28">
+              <div class="flex-1 bg-teal rounded-t" style="height:70%"></div>
+              <div class="flex-1 bg-teal rounded-t" style="height:90%"></div>
+              <div class="flex-1 bg-gold rounded-t" style="height:60%"></div>
+              <div class="flex-1 bg-red rounded-t" style="height:40%"></div>
+            </div>
+            <div class="flex gap-2.5 mt-2 font-mono text-[10px] text-ink/60">
+              <div class="flex-1 text-center">S21</div><div class="flex-1 text-center">S22</div>
+              <div class="flex-1 text-center">S23</div><div class="flex-1 text-center">S24</div>
+            </div>
+          </div>
+          <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4">
+            <h2 class="font-display text-base font-semibold mb-3">Bilan campagnes ponctuelles</h2>
+            <!-- foreach ($bilanCampagnes as $c) { ... } -->
+            <div class="flex justify-between items-center text-sm mb-2.5">
+              <span>🎂 Anniversaire Fatou S. <span class="text-ink/50 text-[12px]">— quota par personne</span></span>
+              <span class="font-mono text-[10px] bg-goldsoft text-[#7a5a1c] px-2 py-0.5 rounded-full">67%</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span>🕊️ Décès famille Ndiaye <span class="text-ink/50 text-[12px]">— total libre, pas de quota</span></span>
+              <span class="font-mono text-[10px] bg-tealsoft text-[#154c40] px-2 py-0.5 rounded-full">245 000 F</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section : Audit (cachée par défaut) ===== -->
+      <section id="section-audit" class="hidden">
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display text-base font-semibold">Historique complet des paiements</h2>
+            <span class="font-mono text-[10px] uppercase text-ink/40">lecture seule</span>
+          </div>
+          <!-- filtres décoratifs -->
+          <div class="flex gap-2 mb-4 font-mono text-[10.5px]">
+            <span class="px-3 py-1.5 rounded-full bg-ink text-paper">Tous</span>
+            <span class="px-3 py-1.5 rounded-full border border-paperline text-ink/60">Hebdo</span>
+            <span class="px-3 py-1.5 rounded-full border border-paperline text-ink/60">Anniversaire</span>
+            <span class="px-3 py-1.5 rounded-full border border-paperline text-ink/60">Décès</span>
+          </div>
+          <!-- foreach ($auditPaiements as $p) { ... } -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[480px]">
+              <thead>
+                <tr class="text-left font-mono text-[10.5px] uppercase text-ink/60 border-b border-paperline">
+                  <th class="py-2.5 pr-3">Apprenant</th><th class="py-2.5 pr-3">Cible</th><th class="py-2.5 pr-3">Montant</th><th class="py-2.5">Date</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-paperline">
+                <tr><td class="py-2.5 pr-3">Awa D.</td><td class="py-2.5 pr-3">Semaine 24</td><td class="py-2.5 pr-3 font-mono">2 000 F</td><td class="py-2.5 text-ink/60">Aujourd'hui 09:14</td></tr>
+                <tr><td class="py-2.5 pr-3">Ibra N.</td><td class="py-2.5 pr-3">Anniv. Fatou</td><td class="py-2.5 pr-3 font-mono">15 000 F</td><td class="py-2.5 text-ink/60">Hier 18:02</td></tr>
+                <tr><td class="py-2.5 pr-3">Moussa K.</td><td class="py-2.5 pr-3">Semaine 22</td><td class="py-2.5 pr-3 font-mono">2 000 F</td><td class="py-2.5 text-ink/60">Hier 12:40</td></tr>
+                <tr><td class="py-2.5 pr-3">Fatou S.</td><td class="py-2.5 pr-3">Décès Ndiaye</td><td class="py-2.5 pr-3 font-mono">5 000 F</td><td class="py-2.5 text-ink/60">08/07 16:20</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section : Apprenants (cachée par défaut) ===== -->
+      <section id="section-apprenants" class="hidden">
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6">
+          <h2 class="font-display text-base font-semibold mb-3">Taux de recouvrement individuel</h2>
+          <!-- foreach ($apprenants as $a) { ... } -->
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left font-mono text-[10.5px] uppercase text-ink/60 border-b border-paperline">
+                <th class="py-2.5">Nom</th><th class="py-2.5">Semaines payées</th><th class="py-2.5">Taux</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-paperline">
+              <tr><td class="py-2.5">Awa Diop</td><td class="py-2.5 text-ink/60">24/24</td><td class="py-2.5"><span class="font-mono text-[10px] bg-tealsoft text-[#154c40] px-2 py-0.5 rounded-full">100%</span></td></tr>
+              <tr><td class="py-2.5">Moussa Konaté</td><td class="py-2.5 text-ink/60">22/24</td><td class="py-2.5"><span class="font-mono text-[10px] bg-redsoft text-[#7a2a20] px-2 py-0.5 rounded-full">92%</span></td></tr>
+              <tr><td class="py-2.5">Fatou Sarr</td><td class="py-2.5 text-ink/60">23/24</td><td class="py-2.5"><span class="font-mono text-[10px] bg-goldsoft text-[#7a5a1c] px-2 py-0.5 rounded-full">96%</span></td></tr>
+            </tbody>
+          </table>
+          <p class="text-[11.5px] text-ink/50 mt-3">Consultation seule — aucune action de saisie ou de modification n'est disponible pour le Coach.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <button data-section="global" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold"></span>Vue globale
+    </button>
+    <button data-section="audit" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold opacity-0"></span>Audit
+    </button>
+    <button data-section="apprenants" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold opacity-0"></span>Apprenants
+    </button>
+  </nav>
+
+  <script>
+    const titres = { global: 'Vue globale', audit: 'Audit', apprenants: 'Apprenants' };
+    function goSection(btn) {
+      const s = btn.dataset.section;
+      document.querySelectorAll('main section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('section-' + s).classList.remove('hidden');
+      document.getElementById('page-title').textContent = titres[s];
+
+      document.querySelectorAll('.section-tab').forEach(b => {
+        const active = b.dataset.section === s;
+        b.classList.toggle('font-bold', active);
+        b.classList.toggle('bg-white/10', active && b.closest('aside') !== null);
+        b.classList.toggle('text-ink', active && b.closest('nav') !== null);
+        b.classList.toggle('text-ink/50', !active && b.closest('nav') !== null);
+        const dot = b.querySelector('.tab-dot');
+        if (dot) dot.classList.toggle('opacity-0', !active);
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gérant — Campagnes · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <div class="md:flex md:min-h-screen">
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Espace Gérant</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a href="/gerant/dashboard" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">📊 Dashboard</a>
+        <a href="/gerant/paiements/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">💳 Paiements</a>
+        <a href="/gerant/campagnes/create" class="rounded-lg px-3 py-2.5 bg-white/10 font-semibold">🎯 Campagnes</a>
+        <a href="/gerant/apprenants" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">👥 Apprenants</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-5xl">
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Gérant</p>
+          <h1 class="font-display text-xl md:text-2xl font-bold">Campagnes</h1>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">FB</div>
+      </div>
+
+      <div class="md:grid md:grid-cols-5 md:gap-5">
+
+        <!-- Liste des campagnes -->
+        <div class="md:col-span-3 bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4">
+          <h2 class="font-display text-base md:text-lg font-semibold mb-3">Campagnes en cours</h2>
+          <!-- foreach ($campagnes as $c) { ... — badge selon $c['statut'] ('ouverte'|'cloturee') et $c['type'] -->
+          <ul class="divide-y divide-paperline text-sm">
+            <li class="py-3 flex items-center justify-between gap-3">
+              <div>
+                <div class="font-medium">🎂 Anniversaire — Fatou S.</div>
+                <div class="text-[11.5px] text-ink/60">15 000 FCFA fixe · 8/12 apprenants ont payé</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10.5px] bg-goldsoft text-[#7a5a1c] px-2.5 py-1 rounded-full">ouverte</span>
+            </li>
+            <li class="py-3 flex items-center justify-between gap-3">
+              <div>
+                <div class="font-medium">🕊️ Décès — famille Ndiaye</div>
+                <div class="text-[11.5px] text-ink/60">Ouverte le 08/07 · clôture automatique le 15/07</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10.5px] bg-redsoft text-[#7a2a20] px-2.5 py-1 rounded-full">J-3</span>
+            </li>
+            <li class="py-3 flex items-center justify-between gap-3">
+              <div>
+                <div class="font-medium">🎒 Sortie pédagogique</div>
+                <div class="text-[11.5px] text-ink/60">3 000 FCFA/apprenant · 24/24 payé</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">clôturée</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Formulaire de création -->
+        <form action="/gerant/campagnes/create" method="post" class="md:col-span-2 bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4 space-y-4">
+          <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+          <h2 class="font-display text-base font-semibold">Créer une campagne</h2>
+
+          <fieldset>
+            <legend class="sr-only">Type de campagne</legend>
+            <div class="grid grid-cols-3 border border-paperline rounded-lg overflow-hidden text-[11px] font-mono">
+              <label class="text-center py-2.5 cursor-pointer bg-ink text-paper has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type" value="anniversaire" checked class="sr-only">Anniv.
+              </label>
+              <label class="text-center py-2.5 cursor-pointer bg-paper text-ink/60 has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type" value="deces" class="sr-only">Décès
+              </label>
+              <label class="text-center py-2.5 cursor-pointer bg-paper text-ink/60 has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type" value="autre" class="sr-only">Autre
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- Champs spécifiques Anniversaire : apprenant concerné + montant FIXE (verrouillé côté Contrôleur, non éditable ici) -->
+          <div>
+            <label for="apprenant_concerne" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Apprenant concerné</label>
+            <select id="apprenant_concerne" name="apprenant_concerne_id" class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+              <option value="3">Fatou Sarr — née en juillet</option>
+            </select>
+          </div>
+          <div>
+            <label for="montant" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Montant demandé (FCFA)</label>
+            <input id="montant" type="number" name="montant" min="0" step="1" value="15000"
+                   class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+            <p class="text-[11.5px] text-ink/60 mt-1.5">
+              Pour "Décès" ce champ reste vide (montant libre par apprenant). Pour "Anniversaire",
+              se déclenche aussi automatiquement en dernière semaine du mois.
+            </p>
+          </div>
+          <div>
+            <label for="date_limite" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Date limite</label>
+            <input id="date_limite" type="date" name="date_limite" disabled
+                   class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paperline/40 text-ink/50">
+            <p class="text-[11px] text-ink/50 mt-1">Calculée automatiquement pour Anniversaire/Décès — modifiable uniquement pour "Autre".</p>
+          </div>
+
+          <button type="submit" class="w-full bg-ink text-paper rounded-lg py-3 text-sm font-semibold">Créer la campagne</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <a href="/gerant/dashboard" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Dashboard</a>
+    <a href="/gerant/paiements/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Paiements</a>
+    <a href="/gerant/campagnes/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Campagnes
+    </a>
+    <a href="/gerant/apprenants" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Apprenants</a>
+  </nav>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans min-h-screen flex items-center justify-center px-4 py-10">
+
+  <div class="w-full max-w-md">
+    <div class="text-center mb-6">
+      <div class="font-display text-2xl font-bold">Cotisations</div>
+      <div class="font-mono text-[11px] tracking-widest uppercase text-gold">Formation Sonatel Academy</div>
+    </div>
+
+    <form action="/login" method="post" class="bg-white border border-paperline rounded-2xl p-5 md:p-7 shadow-sm shadow-ink/5">
+      <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+      <input type="hidden" name="role" id="role" value="apprenant">
+
+      <!-- Sélecteur de rôle -->
+      <div class="grid grid-cols-3 border border-paperline rounded-lg overflow-hidden text-xs md:text-sm font-medium mb-6" role="tablist">
+        <button type="button" data-role="apprenant" onclick="selectRole(this)"
+                class="role-tab py-2.5 bg-ink text-paper transition-colors">Apprenant</button>
+        <button type="button" data-role="gerant" onclick="selectRole(this)"
+                class="role-tab py-2.5 bg-paper text-ink/60 border-l border-paperline transition-colors">Gérant</button>
+        <button type="button" data-role="coach" onclick="selectRole(this)"
+                class="role-tab py-2.5 bg-paper text-ink/60 border-l border-paperline transition-colors">Coach</button>
+      </div>
+
+      
+
+      <div class="mb-4">
+        <label for="email" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1.5">Adresse e-mail</label>
+        <input id="email" type="email" name="email" required placeholder="nom@gmail.com"
+               class="w-full border border-paperline rounded-lg px-3.5 py-2.5 text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-ink/20">
+      </div>
+
+      <div class="mb-2">
+        <label for="mot_de_passe" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1.5">Mot de passe</label>
+        <input id="mot_de_passe" type="password" name="mot_de_passe" required placeholder="••••••••"
+               class="w-full border border-paperline rounded-lg px-3.5 py-2.5 text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-ink/20">
+      </div>
+
+      <div class="text-right mb-5">
+        <a href="/mot-de-passe-oublie" class="font-mono text-[11.5px] text-gold font-semibold">Mot de passe oublié ?</a>
+      </div>
+
+      <button type="submit" class="w-full bg-ink text-paper rounded-lg py-3 text-sm font-semibold">Se connecter</button>
+
+      <div class="flex items-center gap-3 my-5">
+        <div class="h-px flex-1 bg-paperline"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wide text-ink/40">nouveau dans la promo</span>
+        <div class="h-px flex-1 bg-paperline"></div>
+      </div>
+
+      <!-- Visible uniquement pour l'onglet Apprenant (auto-inscription, §3.2) -->
+      <div id="bloc-inscription" class="border border-paperline rounded-xl p-4 flex items-center justify-between gap-3">
+        <div>
+          <div class="text-sm font-semibold">Pas encore inscrit ?</div>
+          <div class="text-[12px] text-ink/60">Créez votre compte apprenant en 2 minutes</div>
+        </div>
+        <a href="/apprenant/inscription" class="shrink-0 border border-ink rounded-lg px-3.5 py-2 text-[12.5px] font-semibold">S'inscrire</a>
+      </div>
+
+      <p id="hint-gerant-coach" class="hidden text-center text-[12px] text-ink/50 mt-2">
+        Compte créé par un administrateur — contactez le coach de votre promotion en cas de besoin.
+      </p>
+    </form>
+
+    <p class="text-center text-[11.5px] text-ink/50 mt-5">Choisissez votre espace ci-dessus pour accéder à l'application.</p>
+  </div>
+
+  <script>
+    function selectRole(btn) {
+      document.querySelectorAll('.role-tab').forEach(b => {
+        b.classList.remove('bg-ink', 'text-paper');
+        b.classList.add('bg-paper', 'text-ink/60');
+      });
+      btn.classList.remove('bg-paper', 'text-ink/60');
+      btn.classList.add('bg-ink', 'text-paper');
+
+      const role = btn.dataset.role;
+      document.getElementById('role').value = role;
+
+      const isApprenant = role === 'apprenant';
+      document.getElementById('bloc-inscription').classList.toggle('hidden', !isApprenant);
+      document.getElementById('hint-gerant-coach').classList.toggle('hidden', isApprenant);
+    }
+  </script>
+
+</body>
+</html>

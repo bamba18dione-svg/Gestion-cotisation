@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gérant — Apprenants · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <div class="md:flex md:min-h-screen">
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Espace Gérant</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a href="/gerant/dashboard" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">📊 Dashboard</a>
+        <a href="/gerant/paiements/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">💳 Paiements</a>
+        <a href="/gerant/campagnes/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🎯 Campagnes</a>
+        <a href="/gerant/apprenants" class="rounded-lg px-3 py-2.5 bg-white/10 font-semibold">👥 Apprenants</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-5xl">
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Gérant</p>
+          <h1 class="font-display text-xl md:text-2xl font-bold">Apprenants</h1>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">FB</div>
+      </div>
+
+      <!-- Recherche + import -->
+      <form action="/gerant/apprenants" method="get" class="flex gap-2 mb-3">
+        <input type="search" name="q" placeholder="Rechercher un apprenant…"
+               class="flex-1 border border-paperline rounded-lg px-3 py-2.5 text-sm bg-white">
+        <button type="submit" class="hidden md:block bg-white border border-paperline rounded-lg px-4 text-sm font-medium">Chercher</button>
+      </form>
+
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex gap-2 overflow-x-auto text-[11px] font-mono">
+          <a href="/gerant/apprenants" class="px-3 py-1.5 rounded-full bg-ink text-paper whitespace-nowrap">Tous (24)</a>
+          <a href="/gerant/apprenants?filtre=retard" class="px-3 py-1.5 rounded-full border border-paperline text-ink/60 whitespace-nowrap">En retard (4)</a>
+          <a href="/gerant/apprenants?filtre=ajour" class="px-3 py-1.5 rounded-full border border-paperline text-ink/60 whitespace-nowrap">À jour (20)</a>
+        </div>
+        <button type="button" onclick="document.getElementById('modal-ajout').classList.remove('hidden')"
+                class="shrink-0 ml-2 bg-ink text-paper rounded-lg px-3 py-2 text-sm font-semibold">＋ Ajouter</button>
+      </div>
+
+      <!-- Liste : cartes empilées sur mobile, tableau sur desktop -->
+      <div class="bg-white border border-paperline rounded-2xl overflow-hidden">
+        <!-- Mobile -->
+        <ul class="md:hidden divide-y divide-paperline">
+          <!-- foreach ($apprenants as $a) { ... } -->
+          <li class="p-4 flex justify-between items-center">
+            <div><div class="font-medium text-sm">Awa Diop</div><div class="text-[11.5px] text-ink/60">Inscrite le 02/05 · manuel</div></div>
+            <span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">à jour</span>
+          </li>
+          <li class="p-4 flex justify-between items-center">
+            <div><div class="font-medium text-sm">Moussa Konaté</div><div class="text-[11.5px] text-ink/60">Inscrit le 02/05 · import CSV</div></div>
+            <span class="font-mono text-[10.5px] bg-redsoft text-[#7a2a20] px-2.5 py-1 rounded-full">2 retards</span>
+          </li>
+          <li class="p-4 flex justify-between items-center">
+            <div><div class="font-medium text-sm">Fatou Sarr</div><div class="text-[11.5px] text-ink/60">Inscrite le 03/05 · auto-inscription</div></div>
+            <span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">à jour</span>
+          </li>
+        </ul>
+        <!-- Desktop -->
+        <table class="hidden md:table w-full text-sm">
+          <thead>
+            <tr class="text-left font-mono text-[10.5px] uppercase text-ink/60 border-b border-paperline">
+              <th class="px-5 py-3">Nom</th><th class="px-5 py-3">Inscription</th><th class="px-5 py-3">Statut</th><th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-paperline">
+            <tr>
+              <td class="px-5 py-3 font-medium">Awa Diop</td><td class="px-5 py-3 text-ink/60">02/05 · manuel</td>
+              <td class="px-5 py-3"><span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">à jour</span></td>
+              <td class="px-5 py-3 text-right"><a href="/gerant/apprenants/1" class="text-gold font-mono text-[11px]">détail →</a></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-medium">Moussa Konaté</td><td class="px-5 py-3 text-ink/60">02/05 · import CSV</td>
+              <td class="px-5 py-3"><span class="font-mono text-[10.5px] bg-redsoft text-[#7a2a20] px-2.5 py-1 rounded-full">2 retards</span></td>
+              <td class="px-5 py-3 text-right"><a href="/gerant/apprenants/2" class="text-gold font-mono text-[11px]">détail →</a></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-medium">Fatou Sarr</td><td class="px-5 py-3 text-ink/60">03/05 · auto-inscription</td>
+              <td class="px-5 py-3"><span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">à jour</span></td>
+              <td class="px-5 py-3 text-right"><a href="/gerant/apprenants/3" class="text-gold font-mono text-[11px]">détail →</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button type="button" onclick="document.getElementById('modal-import').classList.remove('hidden')"
+              class="w-full md:w-auto mt-4 border border-ink rounded-lg py-2.5 md:px-5 text-sm font-semibold">
+        Importer une liste (CSV / Excel)
+      </button>
+
+      <!-- Modale ajout manuel -->
+      <div id="modal-ajout" class="hidden fixed inset-0 bg-ink/40 flex items-end md:items-center justify-center p-0 md:p-4 z-20">
+        <form action="/gerant/apprenants" method="post" class="bg-white w-full md:max-w-md rounded-t-2xl md:rounded-2xl p-5 space-y-3">
+          <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+          <h2 class="font-display text-lg font-semibold">Ajouter un apprenant</h2>
+          <input name="nom" placeholder="Nom" required class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          <input name="prenom" placeholder="Prénom" required class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          <input name="email" type="email" placeholder="Email" required class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          <input name="date_naissance" type="date" placeholder="Date de naissance" class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          <div class="flex gap-2 pt-1">
+            <button type="button" onclick="document.getElementById('modal-ajout').classList.add('hidden')" class="flex-1 border border-paperline rounded-lg py-2.5 text-sm">Annuler</button>
+            <button type="submit" class="flex-1 bg-ink text-paper rounded-lg py-2.5 text-sm font-semibold">Ajouter</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modale import CSV/Excel -->
+      <div id="modal-import" class="hidden fixed inset-0 bg-ink/40 flex items-end md:items-center justify-center p-0 md:p-4 z-20">
+        <form action="/gerant/apprenants/import" method="post" enctype="multipart/form-data" class="bg-white w-full md:max-w-md rounded-t-2xl md:rounded-2xl p-5 space-y-3">
+          <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+          <h2 class="font-display text-lg font-semibold">Importer un fichier</h2>
+          <p class="text-[12.5px] text-ink/60">Formats acceptés : .csv, .xlsx — colonnes attendues : nom, prénom, email, date de naissance.</p>
+          <input type="file" name="fichier" accept=".csv,.xlsx" required class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          <div class="flex gap-2 pt-1">
+            <button type="button" onclick="document.getElementById('modal-import').classList.add('hidden')" class="flex-1 border border-paperline rounded-lg py-2.5 text-sm">Annuler</button>
+            <button type="submit" class="flex-1 bg-ink text-paper rounded-lg py-2.5 text-sm font-semibold">Importer</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <a href="/gerant/dashboard" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Dashboard</a>
+    <a href="/gerant/paiements/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Paiements</a>
+    <a href="/gerant/campagnes/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Campagnes</a>
+    <a href="/gerant/apprenants" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Apprenants
+    </a>
+  </nav>
+
+</body>
+</html>
