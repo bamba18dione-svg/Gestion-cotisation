@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gérant — Saisir un paiement · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <div class="md:flex md:min-h-screen">
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Espace Gérant</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a href="/gerant/dashboard" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">📊 Dashboard</a>
+        <a href="/gerant/paiements/create" class="rounded-lg px-3 py-2.5 bg-white/10 font-semibold">💳 Paiements</a>
+        <a href="/gerant/campagnes/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🎯 Campagnes</a>
+        <a href="/gerant/apprenants" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">👥 Apprenants</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-4xl">
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Gérant</p>
+          <h1 class="font-display text-xl md:text-2xl font-bold">Saisir un paiement</h1>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">FB</div>
+      </div>
+
+      <!-- Message flash d'erreur (affiché si $errors non vide) -->
+      <!-- <?php if (!empty($errors)): ?>
+        <div class="bg-redsoft border border-red text-[#7a2a20] text-sm rounded-lg px-4 py-3 mb-4">
+          <?= htmlspecialchars($errors[0]) ?>
+        </div>
+      <?php endif; ?> -->
+
+      <div class="md:grid md:grid-cols-3 md:gap-5">
+        <form action="/gerant/paiements/create" method="post" class="md:col-span-2 bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4 space-y-4">
+          <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+
+          <h2 class="font-display text-base md:text-lg font-semibold">Nouveau versement</h2>
+
+          <!-- Type de cible : hebdomadaire / anniversaire / décès -->
+          <fieldset>
+            <legend class="sr-only">Type de cotisation</legend>
+            <div class="grid grid-cols-3 border border-paperline rounded-lg overflow-hidden text-[11px] md:text-xs font-mono">
+              <label class="text-center py-2.5 cursor-pointer bg-ink text-paper has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type_cible" value="hebdo" checked class="sr-only">Hebdomadaire
+              </label>
+              <label class="text-center py-2.5 cursor-pointer bg-paper text-ink/60 has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type_cible" value="anniversaire" class="sr-only">Anniversaire
+              </label>
+              <label class="text-center py-2.5 cursor-pointer bg-paper text-ink/60 has-[:checked]:bg-ink has-[:checked]:text-paper">
+                <input type="radio" name="type_cible" value="deces" class="sr-only">Décès
+              </label>
+            </div>
+          </fieldset>
+
+          <div>
+            <label for="apprenant_id" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Apprenant</label>
+            <select id="apprenant_id" name="apprenant_id" required class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+              <!-- foreach ($apprenants as $a): <option value="<?= (int)$a['id'] ?>"><?= htmlspecialchars($a['nom']) ?></option> -->
+              <option value="2">Moussa Konaté — 2 semaines en retard</option>
+              <option value="1">Awa Diop</option>
+              <option value="3">Fatou Sarr</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="montant" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Montant reçu (FCFA)</label>
+            <input id="montant" type="number" name="montant" min="0" step="1" required placeholder="4000"
+                   class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+            <p class="text-[11.5px] text-ink/60 mt-1.5">
+              Ce montant sera automatiquement ventilé sur les semaines impayées les plus anciennes
+              (§3.1 — ventilation automatique).
+            </p>
+          </div>
+
+          <div>
+            <label for="date_paiement" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Date de réception</label>
+            <input id="date_paiement" type="date" name="date_paiement" required value="2026-07-12"
+                   class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper">
+          </div>
+
+          <div>
+            <label for="commentaire" class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Commentaire (optionnel)</label>
+            <textarea id="commentaire" name="commentaire" rows="2" placeholder="Reçu en espèces avant le cours"
+                      class="w-full border border-paperline rounded-lg px-3 py-2.5 text-sm bg-paper"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-ink text-paper rounded-lg py-3 text-sm font-semibold">
+            Enregistrer le paiement
+          </button>
+        </form>
+
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-5 h-fit">
+          <h2 class="font-display text-base font-semibold mb-3">Derniers versements saisis</h2>
+          <ul class="divide-y divide-paperline text-sm">
+            <!-- foreach ($derniersPaiements as $p) { ... } -->
+            <li class="py-2.5 flex justify-between items-center">
+              <div>
+                <div class="font-medium">Awa D. — Semaine 24</div>
+                <div class="text-[11px] text-ink/50">il y a 12 min</div>
+              </div>
+              <span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2 py-0.5 rounded-full">2 000 F</span>
+            </li>
+            <li class="py-2.5 flex justify-between items-center">
+              <div>
+                <div class="font-medium">Ibra N. — Anniv. Fatou</div>
+                <div class="text-[11px] text-ink/50">hier</div>
+              </div>
+              <span class="font-mono text-[10.5px] bg-tealsoft text-[#154c40] px-2 py-0.5 rounded-full">15 000 F</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <a href="/gerant/dashboard" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Dashboard</a>
+    <a href="/gerant/paiements/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Paiements
+    </a>
+    <a href="/gerant/campagnes/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Campagnes</a>
+    <a href="/gerant/apprenants" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Apprenants</a>
+  </nav>
+
+</body>
+</html>

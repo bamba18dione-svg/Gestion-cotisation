@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apprenant — Mon espace · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { ink:'#1B2340', paper:'#F7F3EA', paperline:'#E4DCC8', gold:'#B9862F', goldsoft:'#F3E4C0', teal:'#1F6F5C', tealsoft:'#DCEDE6', red:'#A23B2E', redsoft:'#F5DEDA' },
+    fontFamily: { display:['Fraunces','serif'], sans:['"IBM Plex Sans"','sans-serif'], mono:['"IBM Plex Mono"','monospace'] }
+  }}}
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <div class="md:flex md:min-h-screen">
+    <!-- Barre latérale desktop -->
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Mon espace</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <button data-section="espace" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 bg-white/10 font-semibold">🏠 Mon espace</button>
+        <button data-section="historique" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🕓 Historique</button>
+        <button data-section="notifications" onclick="goSection(this)" class="section-tab text-left rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🔔 Notifications</button>
+      </nav>
+      <form action="/logout" method="post" class="mt-auto">
+        <button class="font-mono text-[11px] text-goldsoft/80 hover:text-goldsoft">↩ Déconnexion</button>
+      </form>
+    </aside>
+
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-4xl">
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Apprenant</p>
+          <h1 id="page-title" class="font-display text-xl md:text-2xl font-bold">Mon espace</h1>
+        </div>
+        <div class="relative w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">
+          <!-- htmlspecialchars(substr($apprenant['prenom'],0,1).substr($apprenant['nom'],0,1)) -->
+          MK
+          <!-- pastille rouge si des notifications non lues existent -->
+          <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red rounded-full border-2 border-paper"></span>
+        </div>
+      </div>
+
+      <!-- ===== Section : Mon espace ===== -->
+      <section id="section-espace" class="space-y-4">
+        <div class="bg-ink text-paper rounded-2xl p-5 md:p-6">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="font-display text-base font-semibold">Mon statut</h2>
+            <span class="font-mono text-[11px] text-goldsoft"><!-- 'Semaine '.$stats['semaine_courante'] -->S24</span>
+          </div>
+          <div class="font-display text-3xl font-bold"><!-- $progression['payees'].' / '.$progression['total'] --> 22 / 24 semaines</div>
+          <div class="text-[13px] text-[#C9CEEB] mt-1">
+            <!-- si $progression['retards'] > 0 -->
+            2 semaines en retard — 4 000 FCFA dus
+          </div>
+        </div>
+
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display text-base font-semibold">Notifications récentes</h2>
+            <button onclick="goSection(document.querySelector('[data-section=notifications]'))" class="font-mono text-[10.5px] text-gold font-semibold">2 non lues →</button>
+          </div>
+          <ul class="space-y-2 text-sm">
+            <!-- foreach (array_slice($notifications,0,2) as $n) { ... } -->
+            <li class="flex justify-between items-center">
+              <span>⚠️ Retard semaine 23 &amp; 24</span>
+              <span class="font-mono text-[10px] bg-redsoft text-[#7a2a20] px-2 py-0.5 rounded-full">retard</span>
+            </li>
+            <li class="flex justify-between items-center">
+              <span>🎂 Campagne anniversaire — Fatou S.</span>
+              <span class="font-mono text-[10px] bg-goldsoft text-[#7a5a1c] px-2 py-0.5 rounded-full">nouveau</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-5">
+          <h2 class="font-display text-base font-semibold mb-3">Campagnes en cours</h2>
+          <!-- foreach ($campagnesEnCours as $c) { ... } -->
+          <div class="flex justify-between items-center text-sm">
+            <span>🎂 Anniversaire Fatou S. — 15 000 F attendus de ma part</span>
+            <span class="font-mono text-[10px] bg-redsoft text-[#7a2a20] px-2 py-0.5 rounded-full">non payé</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section : Historique (cachée par défaut) ===== -->
+      <section id="section-historique" class="hidden">
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6">
+          <h2 class="font-display text-base font-semibold mb-4">24 semaines · 10 mois</h2>
+          <ol class="relative border-l-2 border-paperline pl-4 space-y-4">
+            <!-- foreach ($historique as $h) { classe du point selon $h['statut'] } -->
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-red border-2 border-paper"></span>
+              <div class="font-mono text-[10.5px] text-ink/50">Semaine 24</div>
+              <div class="text-sm font-medium">En retard — 2 000 F dus</div>
+            </li>
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-red border-2 border-paper"></span>
+              <div class="font-mono text-[10.5px] text-ink/50">Semaine 23</div>
+              <div class="text-sm font-medium">En retard — 2 000 F dus</div>
+            </li>
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-teal border-2 border-paper"></span>
+              <div class="font-mono text-[10.5px] text-ink/50">28 juin — Semaine 21</div>
+              <div class="text-sm font-medium">Payée</div>
+            </li>
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-teal border-2 border-paper"></span>
+              <div class="font-mono text-[10.5px] text-ink/50">21 juin — Semaine 20</div>
+              <div class="text-sm font-medium">Payée</div>
+            </li>
+            <li class="relative">
+              <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-gold border-2 border-paper"></span>
+              <div class="font-mono text-[10.5px] text-ink/50">14 juin — Semaine 19</div>
+              <div class="text-sm font-medium">Payée en retard</div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ===== Section : Notifications (cachée par défaut) ===== -->
+      <section id="section-notifications" class="hidden">
+        <div class="bg-white border border-paperline rounded-2xl p-4 md:p-6">
+          <h2 class="font-display text-base font-semibold mb-4">Notifications</h2>
+          <!-- foreach ($notifications as $n) { style différent selon $n['lu'] } -->
+          <ul class="divide-y divide-paperline text-sm">
+            <li class="py-3 flex justify-between items-center gap-3">
+              <div>
+                <div class="font-medium">⚠️ Retard semaine 23 &amp; 24</div>
+                <div class="text-[11.5px] text-ink/50">Il y a 2 jours</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10px] bg-redsoft text-[#7a2a20] px-2.5 py-1 rounded-full">non lue</span>
+            </li>
+            <li class="py-3 flex justify-between items-center gap-3">
+              <div>
+                <div class="font-medium">🎂 Nouvelle campagne — Anniversaire Fatou S.</div>
+                <div class="text-[11.5px] text-ink/50">Il y a 4 jours</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10px] bg-goldsoft text-[#7a5a1c] px-2.5 py-1 rounded-full">non lue</span>
+            </li>
+            <li class="py-3 flex justify-between items-center gap-3 opacity-60">
+              <div>
+                <div class="font-medium">🕊️ Nouvelle campagne — Décès famille Ndiaye</div>
+                <div class="text-[11.5px] text-ink/50">08/07</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">lue</span>
+            </li>
+            <li class="py-3 flex justify-between items-center gap-3 opacity-60">
+              <div>
+                <div class="font-medium">✅ Paiement semaine 21 confirmé</div>
+                <div class="text-[11.5px] text-ink/50">28/06</div>
+              </div>
+              <span class="shrink-0 font-mono text-[10px] bg-tealsoft text-[#154c40] px-2.5 py-1 rounded-full">lue</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Navigation basse (mobile uniquement) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <button data-section="espace" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold"></span>Mon espace
+    </button>
+    <button data-section="historique" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold opacity-0"></span>Historique
+    </button>
+    <button data-section="notifications" onclick="goSection(this)" class="section-tab flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">
+      <span class="tab-dot w-1.5 h-1.5 rounded-full bg-gold opacity-0"></span>Notifications
+    </button>
+  </nav>
+
+  <script>
+    const titres = { espace: 'Mon espace', historique: 'Historique', notifications: 'Notifications' };
+    function goSection(btn) {
+      const s = btn.dataset.section;
+      document.querySelectorAll('main section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('section-' + s).classList.remove('hidden');
+      document.getElementById('page-title').textContent = titres[s];
+
+      document.querySelectorAll('.section-tab').forEach(b => {
+        const active = b.dataset.section === s;
+        b.classList.toggle('font-bold', active);
+        b.classList.toggle('bg-white/10', active && b.closest('aside') !== null);
+        b.classList.toggle('text-ink', active && b.closest('nav') !== null);
+        b.classList.toggle('text-ink/50', !active && b.closest('nav') !== null);
+        const dot = b.querySelector('.tab-dot');
+        if (dot) dot.classList.toggle('opacity-0', !active);
+      });
+    }
+  </script>
+
+</body>
+</html>

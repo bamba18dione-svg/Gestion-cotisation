@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gérant — Tableau de bord · Gestion des Cotisations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#1B2340', paper: '#F7F3EA', paperline: '#E4DCC8',
+          gold: '#B9862F', goldsoft: '#F3E4C0',
+          teal: '#1F6F5C', tealsoft: '#DCEDE6',
+          red: '#A23B2E', redsoft: '#F5DEDA',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['"IBM Plex Sans"', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+</head>
+
+<body class="bg-paper text-ink font-sans">
+
+  <!-- ===== Barre latérale (desktop) ===== -->
+  <div class="md:flex md:min-h-screen">
+    <aside class="hidden md:flex md:flex-col md:w-60 md:shrink-0 bg-ink text-paper px-5 py-7">
+      <div class="font-display text-lg font-bold">Cotisations</div>
+      <div class="font-mono text-[10.5px] tracking-widest uppercase text-goldsoft mb-8">Espace Gérant</div>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a href="/gerant/dashboard" class="rounded-lg px-3 py-2.5 bg-white/10 font-semibold">📊 Dashboard</a>
+        <a href="/gerant/paiements/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">💳 Paiements</a>
+        <a href="/gerant/campagnes/create" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">🎯 Campagnes</a>
+        <a href="/gerant/apprenants" class="rounded-lg px-3 py-2.5 text-[#C9CEEB] hover:bg-white/5">👥 Apprenants</a>
+      </nav>
+      <form action="/logout" method="post" class="mt-auto">
+        <button class="font-mono text-[11px] text-goldsoft/80 hover:text-goldsoft">↩ Déconnexion</button>
+      </form>
+    </aside>
+
+    <!-- ===== Contenu principal ===== -->
+    <main class="flex-1 px-4 pt-5 pb-24 md:px-10 md:pt-8 md:pb-10 max-w-6xl">
+
+      <!-- En-tête -->
+      <div class="flex items-center justify-between mb-5 md:mb-7">
+        <div>
+          <p class="md:hidden font-mono text-[11px] tracking-widest uppercase text-gold font-semibold">Gérant</p>
+          <h1 class="font-display text-xl md:text-2xl font-bold">Tableau de bord</h1>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-mono text-xs font-semibold">
+          <!-- initiales du gérant connecté, ex: substr($_SESSION['utilisateur']['prenom'],0,1).substr($_SESSION['utilisateur']['nom'],0,1) -->
+          FB
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="grid grid-cols-3 gap-2.5 md:grid-cols-4 md:gap-4 mb-5 md:mb-7">
+        <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+          <div class="font-display text-lg md:text-2xl font-bold text-teal"><!-- htmlspecialchars(number_format($stats['total_collecte'])) --> 1 240 000</div>
+          <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">Collecté FCFA</div>
+        </div>
+        <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+          <div class="font-display text-lg md:text-2xl font-bold text-[#8a6420]"><!-- 'Semaine '.$stats['semaine_courante'] --> S24</div>
+          <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">Semaine en cours</div>
+        </div>
+        <div class="bg-white border border-paperline rounded-xl p-3 md:p-5 text-center md:text-left">
+          <div class="font-display text-lg md:text-2xl font-bold text-red"><!-- $stats['nb_retards'] --> 4</div>
+          <div class="font-mono text-[9.5px] md:text-[11px] uppercase tracking-wide text-ink/60">En retard</div>
+        </div>
+        <div class="hidden md:block bg-white border border-paperline rounded-xl p-5">
+          <div class="font-display text-2xl font-bold"><!-- $stats['nb_apprenants'] --> 24</div>
+          <div class="font-mono text-[11px] uppercase tracking-wide text-ink/60">Apprenants inscrits</div>
+        </div>
+      </div>
+
+      <div class="md:grid md:grid-cols-3 md:gap-5">
+        <!-- Tableau croisé -->
+        <div class="md:col-span-2 bg-white border border-paperline rounded-2xl p-4 md:p-6 mb-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display text-base md:text-lg font-semibold">Avancement hebdomadaire</h2>
+            <a href="/gerant/paiements/create" class="font-mono text-[10.5px] text-gold font-semibold">saisir →</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="border-collapse text-[11px] md:text-xs w-full">
+              <thead>
+                <tr>
+                  <th class="text-left font-sans font-medium px-2 py-1.5 sticky left-0 bg-white">Apprenant</th>
+                  <!-- boucle PHP : foreach ($semaines as $s) { echo "<th class='font-mono px-2 py-1.5'>S{$s['numero']}</th>"; } -->
+                  <th class="font-mono px-2 py-1.5 border border-paperline">S21</th>
+                  <th class="font-mono px-2 py-1.5 border border-paperline">S22</th>
+                  <th class="font-mono px-2 py-1.5 border border-paperline">S23</th>
+                  <th class="font-mono px-2 py-1.5 border border-paperline">S24</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- boucle PHP : foreach ($apprenants as $a) { ... } — cellule colorée selon $ventilations[$a['id']][$s['id']] -->
+                <tr>
+                  <td class="px-2 py-1.5 sticky left-0 bg-white font-medium"><!-- htmlspecialchars($a['nom']) -->Awa Diop</td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-1.5 sticky left-0 bg-white font-medium">Moussa Konaté</td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-red" title="en retard"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-red" title="en retard"></div></td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-1.5 sticky left-0 bg-white font-medium">Fatou Sarr</td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-goldsoft border border-gold" title="partielle"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                  <td class="border border-paperline p-0"><div class="w-4 h-4 mx-auto my-1 rounded-sm bg-teal" title="payée"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex gap-4 mt-3 font-mono text-[10px] text-ink/60">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-teal inline-block"></span> payée</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-goldsoft border border-gold inline-block"></span> partielle</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-red inline-block"></span> retard</span>
+          </div>
+        </div>
+
+        <div>
+          <!-- Saisie rapide : visible seulement sur desktop, remplacée par le bouton flottant sur mobile -->
+          <div class="hidden md:block bg-white border border-paperline rounded-2xl p-5 mb-4">
+            <h2 class="font-display text-base font-semibold mb-3">Saisie rapide</h2>
+            <form action="/gerant/paiements/create" method="post" class="space-y-3">
+              <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
+              <div>
+                <label class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Apprenant</label>
+                <select name="apprenant_id" class="w-full border border-paperline rounded-lg px-3 py-2 text-sm bg-paper">
+                  <!-- foreach ($apprenants as $a) echo "<option value='{$a['id']}'>".htmlspecialchars($a['nom'])."</option>"; -->
+                  <option>Moussa Konaté — 2 retards</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-mono text-[10.5px] uppercase text-ink/60 mb-1">Montant (FCFA)</label>
+                <input type="number" name="montant" min="0" step="1" required class="w-full border border-paperline rounded-lg px-3 py-2 text-sm bg-paper">
+              </div>
+              <button type="submit" class="w-full bg-ink text-paper rounded-lg py-2.5 text-sm font-semibold">Enregistrer</button>
+            </form>
+          </div>
+
+          <div class="bg-white border border-paperline rounded-2xl p-4 md:p-5">
+            <h2 class="font-display text-base font-semibold mb-3">Campagnes ouvertes</h2>
+            <ul class="space-y-2 text-sm">
+              <!-- foreach ($campagnesOuvertes as $c) { ... } -->
+              <li class="flex justify-between items-center">
+                <span>🎂 Anniversaire — Fatou S.</span>
+                <span class="font-mono text-[10px] bg-goldsoft text-[#7a5a1c] px-2 py-0.5 rounded-full">8/12</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>🕊️ Décès — famille Ndiaye</span>
+                <span class="font-mono text-[10px] bg-redsoft text-[#7a2a20] px-2 py-0.5 rounded-full">J-3</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Bouton flottant (mobile uniquement) ===== -->
+  <a href="/gerant/paiements/create"
+     class="md:hidden fixed right-4 bottom-20 w-13 h-13 w-[52px] h-[52px] rounded-full bg-gold text-ink shadow-lg shadow-gold/40 flex items-center justify-center text-2xl">
+    +
+  </a>
+
+  <!-- ===== Navigation basse (mobile uniquement) ===== -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white border-t border-paperline flex text-[9.5px] font-mono">
+    <a href="/gerant/dashboard" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink font-bold">
+      <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Dashboard
+    </a>
+    <a href="/gerant/paiements/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Paiements</a>
+    <a href="/gerant/campagnes/create" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Campagnes</a>
+    <a href="/gerant/apprenants" class="flex-1 flex flex-col items-center justify-center gap-1 text-ink/50">Apprenants</a>
+  </nav>
+
+</body>
+</html>
