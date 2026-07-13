@@ -23,7 +23,7 @@
       <div class="font-mono text-[11px] tracking-widest uppercase text-gold">Formation Sonatel Academy</div>
     </div>
 
-    <form action="/login" method="post" class="bg-white border border-paperline rounded-2xl p-5 md:p-7 shadow-sm shadow-ink/5">
+    <form action="" method="post" class="bg-white border border-paperline rounded-2xl p-5 md:p-7 shadow-sm shadow-ink/5">
       <input type="hidden" name="csrf_token" value="<?= /* htmlspecialchars($csrfToken) */ '' ?>">
       <input type="hidden" name="role" id="role" value="apprenant">
 
@@ -55,7 +55,9 @@
         <a href="/mot-de-passe-oublie" class="font-mono text-[11.5px] text-gold font-semibold">Mot de passe oublié ?</a>
       </div>
 
-      <button type="submit" class="w-full bg-ink text-paper rounded-lg py-3 text-sm font-semibold">Se connecter</button>
+ <a href="gerant/apprenants.html" class="w-full bg-ink text-paper rounded-lg py-3 text-sm font-semibold text-center block" role="button">Se connecter</a>
+
+       
 
       <div class="flex items-center gap-3 my-5">
         <div class="h-px flex-1 bg-paperline"></div>
